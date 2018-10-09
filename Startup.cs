@@ -30,7 +30,10 @@ namespace aspnet_essentials
             // {
             //     await context.Response.WriteAsync("Hello World!");
             // });
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
 
         }
     }
