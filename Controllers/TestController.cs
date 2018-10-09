@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace aspnet_essentials
@@ -6,9 +7,11 @@ namespace aspnet_essentials
     public class TestController : Controller
     {
         [HttpGet("test")]
-        public IActionResult Test()
+        public IActionResult Test([FromServices] IHttpContextAccessor httpContextAccessor)
         {
-            return new ContentResult() { Content = "Hello World\n", ContentType = "application/json", StatusCode = 200 };
+            var headers = httpContextAccessor.HttpContext.Request.Headers;
+            var testHeader = headers.ContainsKey("test") ? headers["test"].ToArray()[0] : "NA";
+            return new ContentResult() { Content = $"Hello World\ntest={testHeader}\n", ContentType = "application/json", StatusCode = 200 };
         }
 
     }
