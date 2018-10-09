@@ -1,5 +1,9 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace aspnet_essentials
 {
@@ -7,11 +11,16 @@ namespace aspnet_essentials
     public class TestController : Controller
     {
         [HttpGet("test")]
-        public IActionResult Test([FromServices] IHttpContextAccessor httpContextAccessor)
+        public async Task<IActionResult> Test([FromServices] ILogger<TestController> logger, CancellationToken token)
         {
-            var headers = httpContextAccessor.HttpContext.Request.Headers;
-            var testHeader = headers.ContainsKey("test") ? headers["test"].ToArray()[0] : "NA";
-            return new ContentResult() { Content = $"Hello World\ntest={testHeader}\n", ContentType = "application/json", StatusCode = 200 };
+            await Task.Delay(5000);
+            if (token.IsCancellationRequested)
+            {
+                logger.LogInformation("Not returning Hello World\n");
+                return new ContentResult() { Content = "Cancelled\n", ContentType = "application/json", StatusCode = 200 };
+            }
+            logger.LogInformation("Returning Hello World\n");
+            return new ContentResult() { Content = "Hello World\n", ContentType = "application/json", StatusCode = 200 };
         }
 
     }

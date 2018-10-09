@@ -16,6 +16,7 @@ namespace aspnet_essentials
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
+            services.AddLogging();
             services.AddMvcCore();
         }
 
