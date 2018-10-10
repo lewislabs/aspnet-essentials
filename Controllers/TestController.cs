@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,13 @@ namespace aspnet_essentials
     [Route("test")]
     public class TestController : Controller
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public TestController(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+
+        }
+
         [HttpGet("test")]
         public async Task<IActionResult> Test([FromServices] ILogger<TestController> logger, CancellationToken token)
         {
@@ -27,20 +35,20 @@ namespace aspnet_essentials
         [HttpGet("no-sync")]
         public async Task<IActionResult> NoSync()
         {
-            var list = new List<bool>();
+            var list = new List<string>(100);
             var tasks = new List<Task>();
             for (var i = 0; i < 100; i++)
             {
                 tasks.Add(CreateTask(list));
             }
             await Task.WhenAll(tasks);
-            return new ContentResult() { Content = "TEST" };
+            return new ContentResult() { Content = "TEST", StatusCode = list.Any(i => i == null) ? 500 : 200 };
         }
 
-        private async Task CreateTask(List<bool> list)
+        private async Task CreateTask(List<string> list)
         {
             await Task.Delay(100);
-            list.Add(true);
+            list.Add(_httpContextAccessor.HttpContext.Request.Headers["test"]);
         }
 
     }
