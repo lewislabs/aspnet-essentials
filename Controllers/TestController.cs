@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +22,25 @@ namespace aspnet_essentials
             }
             logger.LogInformation("Returning Hello World\n");
             return new ContentResult() { Content = "Hello World\n", ContentType = "application/json", StatusCode = 200 };
+        }
+
+        [HttpGet("no-sync")]
+        public async Task<IActionResult> NoSync()
+        {
+            var list = new List<bool>();
+            var tasks = new List<Task>();
+            for (var i = 0; i < 100; i++)
+            {
+                tasks.Add(CreateTask(list));
+            }
+            await Task.WhenAll(tasks);
+            return new ContentResult() { Content = "TEST" };
+        }
+
+        private async Task CreateTask(List<bool> list)
+        {
+            await Task.Delay(100);
+            list.Add(true);
         }
 
     }
