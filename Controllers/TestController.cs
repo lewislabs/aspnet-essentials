@@ -54,14 +54,14 @@ namespace aspnet_essentials
         [HttpGet("block-one")]
         public IActionResult BlockOne()
         {
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
             return new ContentResult() { Content = "test" };
         }
 
         [HttpGet("block-two")]
         public IActionResult BlockTwo()
         {
-            Task.Delay(100).Wait();
+            Task.Delay(1000).Wait();
             return new ContentResult() { Content = "test" };
         }
 
@@ -70,7 +70,7 @@ namespace aspnet_essentials
         {
             await Task.Run(() =>
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
             });
             return new ContentResult() { Content = "test" };
         }
@@ -78,7 +78,7 @@ namespace aspnet_essentials
         [HttpGet("no-block")]
         public async Task<IActionResult> NoBlock()
         {
-            await Task.Delay(100);
+            await Task.Delay(1000);
             return new ContentResult() { Content = "test" };
         }
 
