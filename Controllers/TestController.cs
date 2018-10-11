@@ -51,5 +51,36 @@ namespace aspnet_essentials
             list.Add(_httpContextAccessor.HttpContext.Request.Headers["test"]);
         }
 
+        [HttpGet("block-one")]
+        public IActionResult BlockOne()
+        {
+            Thread.Sleep(100);
+            return new ContentResult() { Content = "test" };
+        }
+
+        [HttpGet("block-two")]
+        public IActionResult BlockTwo()
+        {
+            Task.Delay(100).Wait();
+            return new ContentResult() { Content = "test" };
+        }
+
+        [HttpGet("block-three")]
+        public async Task<IActionResult> BlockThree()
+        {
+            await Task.Run(() =>
+            {
+                Thread.Sleep(100);
+            });
+            return new ContentResult() { Content = "test" };
+        }
+
+        [HttpGet("no-block")]
+        public async Task<IActionResult> NoBlock()
+        {
+            await Task.Delay(100);
+            return new ContentResult() { Content = "test" };
+        }
+
     }
 }
